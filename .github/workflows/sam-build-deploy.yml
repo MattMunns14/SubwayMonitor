@@ -1,0 +1,34 @@
+name: SAM Build, Deploy
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  sam-build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: sam build
+      uses: TractorZoom/sam-cli-action@master
+      with:
+        sam_command: "build"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+    - name: sam deploy
+      uses: TractorZoom/sam-cli-action@master
+      with:
+        sam_command: "deploy --template-file template.yml \
+                             --stack-name ${{ secrets.STACK_NAME }} \
+                             --s3-bucket ${{ secrets.S3_BUCKET }} \
+                             --parameter-overrides \
+                             Certificate=${{ secrets.API_KEY }}
+                             --capabilities CAPABILITY_NAMED_IAM \
+                             --role-arn ${{ secrets.ROLE_ARN }} \
+                              --region ${{ secrets.AWS_REGION }}"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}

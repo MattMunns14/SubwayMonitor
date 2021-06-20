@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  subway-monitor
+
+Parameters:
+  ApiKey:
+    Type: String
+
+Resources:
+  SubwayMonitorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: SubwayMonitor/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          API_KEY: !Ref ApiKey
+      Events:
+        IndexOperations:
+          Type: Api
+          Properties:
+            Path: /subway-monitor
+            Method: get
