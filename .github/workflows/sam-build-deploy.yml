@@ -24,7 +24,7 @@ jobs:
                              --stack-name ${{ secrets.STACK_NAME }} \
                              --s3-bucket ${{ secrets.S3_BUCKET }} \
                              --parameter-overrides \
-                             Certificate=${{ secrets.API_KEY }}
+                             ApiKey=${{ secrets.API_KEY }}
                              --capabilities CAPABILITY_NAMED_IAM \
                              --role-arn ${{ secrets.ROLE_ARN }} \
                               --region ${{ secrets.AWS_REGION }}"
