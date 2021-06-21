@@ -7,6 +7,8 @@ jobs:
   sam-build-deploy:
     runs-on: ubuntu-latest
     steps:
+    - name: Install dependencies
+      run: pip install wheel
     - name: Checkout code
       uses: actions/checkout@v2
     - name: sam build
