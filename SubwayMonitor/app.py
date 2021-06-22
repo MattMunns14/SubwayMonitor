@@ -58,6 +58,8 @@ def get_next_departure_for_list_of_stations(url, stations):
         url=url,
         headers=headers
     )
+    for station in stations:
+        next_departure_dict[station] = []
 
     feed = gtfs_realtime_pb2.FeedMessage()
     feed.ParseFromString(response.content)
@@ -68,9 +70,7 @@ def get_next_departure_for_list_of_stations(url, stations):
                 if stu.HasField('stop_id'):
                     for station in stations:
                         if stu.stop_id == station:
-                            if station in next_departure_dict:
-                                next_departure_dict[station].append(stu.arrival.time)
-                            else:
-                                next_departure_dict[station] = [stu.arrival.time]
+                            next_departure_dict[station].append(stu.arrival.time)
+
 
 
