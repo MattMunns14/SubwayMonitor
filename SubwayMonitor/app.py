@@ -1,3 +1,4 @@
+import json
 import os
 import time
 
@@ -7,6 +8,7 @@ from google.transit import gtfs_realtime_pb2
 headers = {
     'x-api-key': os.environ['API_KEY']
 }
+
 
 WAIT_TOLERANCE = 120
 
@@ -44,7 +46,11 @@ def lambda_handler(event, context):
             else:
                 departure_in_range_dict[station] = False
 
-    return departure_in_range_dict
+    return {
+
+            "statusCode": 200,
+            "body": json.dumps(departure_in_range_dict),
+        }
 
 
 def get_next_departure_for_list_of_stations(url, stations):
@@ -66,4 +72,5 @@ def get_next_departure_for_list_of_stations(url, stations):
                                 next_departure_dict[station].append(stu.arrival.time)
                             else:
                                 next_departure_dict[station] = [stu.arrival.time]
+
 
