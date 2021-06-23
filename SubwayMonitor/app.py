@@ -68,9 +68,5 @@ def get_next_departure_for_list_of_stations(url, stations):
             tu = entity.trip_update
             for stu in tu.stop_time_update:
                 if stu.HasField('stop_id'):
-                    for station in stations:
-                        if stu.stop_id == station:
-                            next_departure_dict[station].append(stu.arrival.time)
-
-
-
+                    if stu.stop_id in next_departure_dict:
+                        next_departure_dict[stu.stop_id].append(stu.arrival.time)
