@@ -52,8 +52,9 @@ def lambda_handler(event, context):
     response = MessagingResponse()
     response.message('Hello back')
     response = str(response)
-    print(response)
-    return response
+    return {"Content-Type": "application/xml",
+            "statusCode": 200,
+            "body": response}
 
 
 def get_next_departure_for_list_of_stations(url, stations):
