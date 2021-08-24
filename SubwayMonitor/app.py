@@ -51,7 +51,9 @@ def lambda_handler(event, context):
 
     response = MessagingResponse()
     response.message('Hello back')
-    return str(response)
+    response = str(response)
+    print(response)
+    return response
 
 
 def get_next_departure_for_list_of_stations(url, stations):
