@@ -20,12 +20,9 @@ Resources:
         Variables:
           API_KEY: !Ref ApiKey
       Events:
-        SNSEvent:
-          Type: SNS
+        IndexOperations:
+          Type: Api
           Properties:
-            Topic: !Ref SMSReciever
+            Path: /subway-monitor
+            Method: get
 
-  SMSReciever:
-    Type: AWS::SNS::Topic
-    Properties:
-      TopicName: SMSRecieverTopic
