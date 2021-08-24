@@ -4,6 +4,8 @@ import time
 
 import requests as r
 from google.transit import gtfs_realtime_pb2
+from twilio.twiml.messaging_response import MessagingResponse
+
 
 headers = {
     'x-api-key': os.environ['API_KEY']
@@ -47,11 +49,9 @@ def lambda_handler(event, context):
             else:
                 departure_in_range_dict[station] = False
 
-    return {
-
-            "statusCode": 200,
-            "body": json.dumps(departure_in_range_dict),
-        }
+    response = MessagingResponse()
+    response.message('Hello back')
+    return str(response)
 
 
 def get_next_departure_for_list_of_stations(url, stations):
