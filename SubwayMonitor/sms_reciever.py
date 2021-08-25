@@ -1,7 +1,10 @@
-import boto3
-import os
 import json
+import os
 import time
+
+import boto3
+from decimal import Decimal
+
 from utils import dict_to_dynamo_json
 
 SUPPORTED_TRAINS_AND_DIRECTIONS = [('C', 'N'), ('C', 'S')]
@@ -34,7 +37,7 @@ def write_monitoring_request_to_dynamo(message_as_tuple, number):
 
     dynamo_client = boto3.client('dynamodb')
     request_dict = {
-        'timestamp': time.time(),
+        'timestamp': Decimal(str(time.time())),
         'status': 'open',
         'train': message_as_tuple[0],
         'direction': message_as_tuple[1],
