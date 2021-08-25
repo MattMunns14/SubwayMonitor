@@ -52,7 +52,7 @@ def lambda_handler(event, context):
     response = MessagingResponse()
     response.message('Hello back')
     response = str(response)
-    return {"Content-Type": "application/xml",
+    return {"Content-Type": "text/xml",
             "statusCode": 200,
             "body": response}
 
