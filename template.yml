@@ -54,7 +54,7 @@ Resources:
         - AttributeName: timestamp
           KeyType: HASH
         - AttributeName: status
-          KeyType: Range
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
