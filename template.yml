@@ -13,6 +13,7 @@ Resources:
     Properties:
       Policies:
         - AmazonSNSFullAccess
+        - AmazonDynamoDBFullAccess
       CodeUri: SubwayMonitor/
       Handler: app.lambda_handler
       Runtime: python3.8
