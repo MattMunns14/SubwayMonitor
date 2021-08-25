@@ -23,6 +23,7 @@ Resources:
         Variables:
           API_KEY: !Ref ApiKey
           SMS_SENDER_TOPIC_ARN: !Ref SMSSender
+          DYNAMODB_TABLE : !Ref DynamoDBTable
       Events:
         SNSEvent:
           Type: SNS
