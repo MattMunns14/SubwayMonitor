@@ -1,10 +1,9 @@
-import json
 import os
 import time
+import boto3
 
 import requests as r
 from google.transit import gtfs_realtime_pb2
-from twilio.twiml.messaging_response import MessagingResponse
 
 
 headers = {
@@ -49,12 +48,11 @@ def lambda_handler(event, context):
             else:
                 departure_in_range_dict[station] = False
 
-    response = MessagingResponse()
-    response.message('Hello back')
-    response = str(response)
-    return {"Content-Type": "text/xml",
-            "statusCode": 200,
-            "body": response}
+    client = boto3.client('sns')
+    response = client.publish(
+        TargetArn=os.environ['TOPIC_ARN'],
+        Message='HELLO ERIN'
+    )
 
 
 def get_next_departure_for_list_of_stations(url, stations):

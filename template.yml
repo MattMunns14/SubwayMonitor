@@ -19,6 +19,7 @@ Resources:
       Environment:
         Variables:
           API_KEY: !Ref ApiKey
+          SMS_SENDER_TOPIC_ARN: !Ref SMSSender
       Events:
         SNSEvent:
           Type: SNS
@@ -29,3 +30,12 @@ Resources:
     Type: AWS::SNS::Topic
     Properties:
       TopicName: SMSRecieverTopic
+
+  SMSSender:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: SMSSenderTopic
+      Subscription:
+        - Endpoint: 7707102162
+          Protocol: sms
+
