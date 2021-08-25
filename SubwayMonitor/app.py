@@ -31,6 +31,12 @@ next_departure_dict = {}
 
 def lambda_handler(event, context):
     print(event)
+    response = MessagingResponse()
+    response.message('Hello back')
+    response = str(response)
+    return {"Content-Type": "text/xml",
+            "statusCode": 200,
+            "body": response}
     for url, data in endpoints_and_stations.items():
         get_next_departure_for_list_of_stations(url, data['stations'])
 
