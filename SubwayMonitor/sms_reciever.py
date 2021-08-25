@@ -42,5 +42,5 @@ def write_monitoring_request_to_dynamo(message_as_tuple, number):
     }
     dynamo_client.put_item(
         Item=dict_to_dynamo_json(request_dict),
-        Table=os.environ['DYNAMODB_TABLE']
+        TableName=os.environ['DYNAMODB_TABLE']
     )
