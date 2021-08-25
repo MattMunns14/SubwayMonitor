@@ -38,6 +38,6 @@ Resources:
     Properties:
       TopicName: SMSSenderTopic
       Subscription:
-        - Endpoint: 7707102162
+        - Endpoint: 17707102162
           Protocol: sms
 
