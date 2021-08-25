@@ -50,7 +50,7 @@ def lambda_handler(event, context):
 
     client = boto3.client('sns')
     response = client.publish(
-        TargetArn=os.environ['TOPIC_ARN'],
+        TargetArn=os.environ['SMS_SENDER_TOPIC_ARN'],
         Message='HELLO ERIN'
     )
 
