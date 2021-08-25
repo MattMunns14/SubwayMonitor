@@ -2,7 +2,7 @@ import boto3
 import os
 import json
 import time
-from .utils import dict_to_dynamo_json
+from utils import dict_to_dynamo_json
 
 SUPPORTED_TRAINS_AND_DIRECTIONS = [('C', 'N'), ('C', 'S')]
 
