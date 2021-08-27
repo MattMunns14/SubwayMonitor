@@ -18,6 +18,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
+          API_KEY: !Ref ApiKey
           DYNAMODB_TABLE: !Ref DynamoDBTable
           SMS_SENDER_TOPIC_ARN: !Ref SMSSender
       Events:
@@ -41,7 +42,6 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          API_KEY: !Ref ApiKey
           SMS_SENDER_TOPIC_ARN: !Ref SMSSender
           DYNAMODB_TABLE: !Ref DynamoDBTable
       Events:
