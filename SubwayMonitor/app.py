@@ -22,8 +22,13 @@ def lambda_handler(event, context):
             timestamp = new_item['timestamp']
     else:
         pass
-    if train_in_range(train, direction):
-        post_to_topic_and_update_dynamo(train, direction, timestamp)
+
+    if time.time() - timestamp >= 2700:
+        update_dynamo(timestamp, 'expired')
+
+    elif train_in_range(train, direction):
+        post_to_topic(train, direction, timestamp)
+        update_dynamo(timestamp, 'notified')
     else:
         time.sleep(POLLING_FREQUENCY)
         sqs_client = boto3.client('sqs')
@@ -37,7 +42,7 @@ def lambda_handler(event, context):
         )
 
 
-def post_to_topic_and_update_dynamo(train, direction, timestamp):
+def post_to_topic(train, direction, timestamp):
 
     sns_client = boto3.client('sns')
     response = sns_client.publish(
@@ -45,14 +50,7 @@ def post_to_topic_and_update_dynamo(train, direction, timestamp):
         Message=f'Leave now the {train} heading {direction}'
     )
 
-    table = boto3.resource('dynamodb').table(os.environ['DYNAMODB_TABLE'])
-    record = table.get_item(
-        Key={'timestamp': timestamp}
-    )
-    record['status'] = 'closed'
-    table.put_item(
-        Item=record
-    )
+
 
 
 def get_event_source(event):
@@ -61,4 +59,14 @@ def get_event_source(event):
         return 'DynamoDB'
     if source == 'aws:sqs':
         return 'SQS'
+
+def update_dynamo(timestamp, status):
+    table = boto3.resource('dynamodb').table(os.environ['DYNAMODB_TABLE'])
+    record = table.get_item(
+        Key={'timestamp': timestamp}
+    )
+    record['status'] = status
+    table.put_item(
+        Item=record
+    )
 
