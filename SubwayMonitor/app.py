@@ -1,7 +1,8 @@
-from subway_monitor import poll_trains
+from subway_monitor import train_in_range
 
 
 def lambda_handler(event, context):
     print(event)
-    poll_trains(event)
+    # if train_in_range(event):
+
 

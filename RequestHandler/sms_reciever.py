@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from utils import dict_to_dynamo_json
 
-SUPPORTED_TRAINS_AND_DIRECTIONS = [('C', 'N'), ('C', 'S')]
+SUPPORTED_TRAINS_AND_DIRECTIONS = [('C', 'N'), ('C', 'S'), ('E', 'S'), ('E', 'N'), ('A', 'S'), ('A', 'N')]
 
 
 def handle_sns_event(event):

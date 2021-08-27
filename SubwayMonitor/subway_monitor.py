@@ -4,11 +4,10 @@ import requests as r
 from google.transit import gtfs_realtime_pb2
 
 headers = {
-    # 'x-api-key': os.environ['API_KEY']
-    'x-api-key': 'ed2USiPGcJ9qHmZdvNjvy5byWEIViM170TIUhwph'
+    'x-api-key': os.environ['API_KEY']
 }
 
-WAIT_TOLERANCE = 180
+WAIT_TOLERANCE = 420
 
 
 STATION_INFO = {
@@ -39,11 +38,28 @@ SUPPORTED_TRAINS_AND_INFO = {
     ('C', 'S'): {
         'station': 'A22S',
         'train': 'C'
+    },
+    ('E', 'S'): {
+        'station': 'A22S',
+        'train': 'E'
+    },
+    ('E', 'N'): {
+        'station': 'A22N',
+        'train': 'E'
+    },
+    ('A', 'S'): {
+        'station': 'A22S',
+        'train': 'A'
+    },
+    ('A', 'N'): {
+        'station': 'A22N',
+        'train': 'A'
     }
+
 }
 
 
-def poll_trains(event):
+def train_in_range(event):
     event = ('C', 'N')
     station = SUPPORTED_TRAINS_AND_INFO[event]["station"]
     url = STATION_INFO[station]['endpoint']
@@ -56,7 +72,6 @@ def poll_trains(event):
     time_now = int(time.time())
     if list(filter(lambda time_val: (time_val >= time_now + time_to_station) and (time_val < time_now + time_to_station
                                                                                   + WAIT_TOLERANCE), departures)):
-        print('In Range')
         return True
     else:
         return False
@@ -80,5 +95,3 @@ def get_next_departure_for_train(url, station, train):
                         departures.append(stu.arrival.time)
     return departures
 
-
-poll_trains(1)
