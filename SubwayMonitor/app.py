@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     else:
         pass
 
-    if time.time() - timestamp >= 2700:
+    if time.time() - float(timestamp) >= 2700:
         update_dynamo(timestamp, 'expired')
 
     elif train_in_range(train, direction):
