@@ -26,7 +26,6 @@ def handle_sns_event(event):
         )
 
     else:
-
         response = sns_client.publish(
             TargetArn=os.environ['SMS_SENDER_TOPIC_ARN'],
             Message=f'Message not understood or train not supported'

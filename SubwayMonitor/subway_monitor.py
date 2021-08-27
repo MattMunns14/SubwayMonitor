@@ -59,8 +59,9 @@ SUPPORTED_TRAINS_AND_INFO = {
 }
 
 
-def train_in_range(event):
-    event = ('C', 'N')
+def train_in_range(train, direction):
+    print(f'Searching for train {train} {direction}')
+    event = (train, direction)
     station = SUPPORTED_TRAINS_AND_INFO[event]["station"]
     url = STATION_INFO[station]['endpoint']
     train = event[0]
