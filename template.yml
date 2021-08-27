@@ -28,12 +28,6 @@ Resources:
             Stream: !GetAtt DynamoDBTable.StreamArn
             BatchSize: 1
             StartingPosition: TRIM_HORIZON
-        PollEvent:
-          Type: SQS
-          Properties:
-            Queue: !GetAtt PollQueue.Arn
-            BatchSize: 1
-
 
   RequestHandlerFunction:
     Type: AWS::Serverless::Function
@@ -88,6 +82,3 @@ Resources:
         WriteCapacityUnits: 5
       StreamSpecification:
         StreamViewType: NEW_IMAGE
-
-  PollQueue:
-    Type: AWS::SQS::Queue
