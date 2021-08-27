@@ -41,6 +41,7 @@ def lambda_handler(event, context):
         else:
             post_to_queue(train, direction, timestamp)
 
+
 def post_to_queue(train, direction, timestamp):
     time.sleep(POLLING_FREQUENCY)
     sqs_client = boto3.client('sqs')
@@ -59,10 +60,8 @@ def post_to_topic(train, direction, timestamp):
     sns_client = boto3.client('sns')
     response = sns_client.publish(
         TargetArn=os.environ['SMS_SENDER_TOPIC_ARN'],
-        Message=f'Leave now the {train} heading {direction}'
+        Message=f'Leave now for the {train} heading {direction}'
     )
-
-
 
 
 def get_event_source(event):
@@ -72,10 +71,11 @@ def get_event_source(event):
     if source == 'aws:sqs':
         return 'SQS'
 
+
 def update_dynamo(timestamp, status):
     if not isinstance(timestamp, Decimal):
         timestamp = Decimal(timestamp)
-    table = boto3.resource('dynamodb').table(os.environ['DYNAMODB_TABLE'])
+    table = boto3.resource('dynamodb').Table(os.environ['DYNAMODB_TABLE'])
     record = table.get_item(
         Key={'timestamp': timestamp}
     )
