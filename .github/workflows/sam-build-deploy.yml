@@ -24,7 +24,7 @@ jobs:
       with:
         sam_command: "deploy --stack-name ${{ secrets.STACK_NAME }} \
                              --s3-bucket ${{ secrets.S3_BUCKET }} \
-                             --s3-prefix SubwayMonitor \
+                             --s3-prefix RequestHandler \
                              --parameter-overrides \
                              ApiKey=${{ secrets.API_KEY }} \
                              --capabilities CAPABILITY_NAMED_IAM \

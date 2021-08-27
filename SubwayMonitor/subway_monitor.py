@@ -3,57 +3,71 @@ import os
 import requests as r
 from google.transit import gtfs_realtime_pb2
 
-
 headers = {
-    'x-api-key': os.environ['API_KEY']
+    # 'x-api-key': os.environ['API_KEY']
+    'x-api-key': 'ed2USiPGcJ9qHmZdvNjvy5byWEIViM170TIUhwph'
 }
 
+WAIT_TOLERANCE = 180
 
-WAIT_TOLERANCE = 120
 
-endpoints_and_stations = {
-    'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs': {
-        'stations': ['123S', '123N'],
+STATION_INFO = {
+    'A22N': {
+        'endpoint': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace',
+        'time_to_station': 240
+    },
+    'A22S': {
+        'endpoint': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace',
+        'time_to_station': 240
+    },
+    '123S': {
+        "endpoint": 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs',
         'time_to_station': 300
     },
-    'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace': {
-        'stations': ['A22S', 'A22N'],
-        'time_to_station': 240
+    '123N': {
+        "endpoint": 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs',
+        'time_to_station': 300
     }
 
 }
 
-next_departure_dict = {}
+SUPPORTED_TRAINS_AND_INFO = {
+    ('C', 'N'): {
+        'station': 'A22N',
+        'train': 'C'
+    },
+    ('C', 'S'): {
+        'station': 'A22S',
+        'train': 'C'
+    }
+}
 
 
 def poll_trains(event):
+    event = ('C', 'N')
+    station = SUPPORTED_TRAINS_AND_INFO[event]["station"]
+    url = STATION_INFO[station]['endpoint']
+    train = event[0]
 
-    for url, data in endpoints_and_stations.items():
-        get_next_departure_for_list_of_stations(url, data['stations'])
+    time_to_station = STATION_INFO[station]['time_to_station']
+
+    departures = get_next_departure_for_train(url, station, train)
 
     time_now = int(time.time())
-
-    departure_in_range_dict = {}
-
-    for data in endpoints_and_stations.values():
-        for station in data['stations']:
-            if list(filter(lambda time_val: (time_val >= time_now + data['time_to_station']) and (time_val < time_now +
-                                                                                                  data[
-                                                                                                      'time_to_station']
-                                                                                                  + WAIT_TOLERANCE),
-                           next_departure_dict[station])):
-                departure_in_range_dict[station] = True
-            else:
-                departure_in_range_dict[station] = False
+    if list(filter(lambda time_val: (time_val >= time_now + time_to_station) and (time_val < time_now + time_to_station
+                                                                                  + WAIT_TOLERANCE), departures)):
+        print('In Range')
+        return True
+    else:
+        return False
 
 
-def get_next_departure_for_list_of_stations(url, stations):
+def get_next_departure_for_train(url, station, train):
     response = r.get(
         url=url,
         headers=headers
     )
-    for station in stations:
-        next_departure_dict[station] = []
+    departures = []
 
     feed = gtfs_realtime_pb2.FeedMessage()
     feed.ParseFromString(response.content)
@@ -62,5 +76,9 @@ def get_next_departure_for_list_of_stations(url, stations):
             tu = entity.trip_update
             for stu in tu.stop_time_update:
                 if stu.HasField('stop_id'):
-                    if stu.stop_id in next_departure_dict:
-                        next_departure_dict[stu.stop_id].append(stu.arrival.time)
+                    if (stu.stop_id == station) & (tu.trip.route_id == train):
+                        departures.append(stu.arrival.time)
+    return departures
+
+
+poll_trains(1)

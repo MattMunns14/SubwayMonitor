@@ -11,10 +11,37 @@ Resources:
   SubwayMonitorFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Handler: app.lambda_handler
+      CodeUri: SubwayMonitor/
+      Runtime: python3.8
+      Timeout: 15
+      MemorySize: 512
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref DynamoDBTable
+          SMS_SENDER_TOPIC_ARN: !Ref SMSSender
+          POLL_QUEUE_ARN: !GetAtt PollQueue.Arn
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt DynamoDBTable.StreamArn
+            BatchSize: 1
+            StartingPosition: TRIM_HORIZON
+        PollEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt PollQueue.Arn
+            BatchSize: 1
+
+
+  RequestHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
       Policies:
         - AmazonSNSFullAccess
         - AmazonDynamoDBFullAccess
-      CodeUri: SubwayMonitor/
+      CodeUri: RequestHandler/
       Handler: app.lambda_handler
       Runtime: python3.8
       Timeout: 15
@@ -23,7 +50,7 @@ Resources:
         Variables:
           API_KEY: !Ref ApiKey
           SMS_SENDER_TOPIC_ARN: !Ref SMSSender
-          DYNAMODB_TABLE : !Ref DynamoDBTable
+          DYNAMODB_TABLE: !Ref DynamoDBTable
       Events:
         SNSEvent:
           Type: SNS
@@ -59,3 +86,8 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+
+  PollQueue:
+    Type: AWS::SQS::Queue
