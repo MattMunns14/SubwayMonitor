@@ -20,7 +20,6 @@ Resources:
         Variables:
           DYNAMODB_TABLE: !Ref DynamoDBTable
           SMS_SENDER_TOPIC_ARN: !Ref SMSSender
-          POLL_QUEUE_ARN: !GetAtt PollQueue.Arn
       Events:
         Stream:
           Type: DynamoDB
