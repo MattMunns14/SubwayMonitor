@@ -21,26 +21,37 @@ def lambda_handler(event, context):
             train = new_item['train']
             direction = new_item['direction']
             timestamp = new_item['timestamp']
+            if train_in_range(train, direction):
+                post_to_topic(train, direction, timestamp)
+                update_dynamo(timestamp, 'notified')
+            else:
+                post_to_queue(train, direction, timestamp)
     else:
-        pass
+        body = json.loads(record['body'])
+        train = body['train']
+        direction = body['direction']
+        timestamp = body['timestamp']
 
-    if time.time() - float(timestamp) >= 2700:
-        update_dynamo(timestamp, 'expired')
+        if time.time() - float(timestamp) >= 2700:
+            update_dynamo(timestamp, 'expired')
 
-    elif train_in_range(train, direction):
-        post_to_topic(train, direction, timestamp)
-        update_dynamo(timestamp, 'notified')
-    else:
-        time.sleep(POLLING_FREQUENCY)
-        sqs_client = boto3.client('sqs')
-        sqs_client.send_message(
-            QueueUrl=os.environ['SQS_QUEUE_URL'],
-            MessageBody=json.dumps({
-                "train": train,
-                "direction": direction,
-                "timestamp": float(timestamp)
-            })
-        )
+        elif train_in_range(train, direction):
+            post_to_topic(train, direction, timestamp)
+            update_dynamo(timestamp, 'notified')
+        else:
+            post_to_queue(train, direction, timestamp)
+
+def post_to_queue(train, direction, timestamp):
+    time.sleep(POLLING_FREQUENCY)
+    sqs_client = boto3.client('sqs')
+    sqs_client.send_message(
+        QueueUrl=os.environ['SQS_QUEUE_URL'],
+        MessageBody=json.dumps({
+            "train": train,
+            "direction": direction,
+            "timestamp": float(timestamp)
+        })
+    )
 
 
 def post_to_topic(train, direction, timestamp):
