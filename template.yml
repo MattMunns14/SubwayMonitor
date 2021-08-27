@@ -11,6 +11,9 @@ Resources:
   SubwayMonitorFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Policies:
+        - AmazonSNSFullAccess
+        - AmazonDynamoDBFullAccess
       Handler: app.lambda_handler
       CodeUri: SubwayMonitor/
       Runtime: python3.8

@@ -1,7 +1,12 @@
+import os
+import time
+
+import boto3
+
 from subway_monitor import train_in_range
 from utils import dynamo_item_to_dict
-import os
-import boto3
+
+POLLING_FREQUENCY = 20
 
 
 def lambda_handler(event, context):
@@ -15,6 +20,8 @@ def lambda_handler(event, context):
             direction = new_item['direction']
             if train_in_range(train, direction):
                 post_to_topic(train, direction)
+            else:
+                time.sleep(POLLING_FREQUENCY)
 
 
 def post_to_topic(train, direction):
