@@ -6,6 +6,7 @@ import boto3
 
 from subway_monitor import train_in_range
 from utils import dynamo_item_to_dict
+from decimal import Decimal
 
 POLLING_FREQUENCY = 20
 
@@ -37,7 +38,7 @@ def lambda_handler(event, context):
             MessageBody=json.dumps({
                 "train": train,
                 "direction": direction,
-                "timestamp": timestamp
+                "timestamp": float(timestamp)
             })
         )
 
@@ -61,6 +62,8 @@ def get_event_source(event):
         return 'SQS'
 
 def update_dynamo(timestamp, status):
+    if not isinstance(timestamp, Decimal):
+        timestamp = Decimal(timestamp)
     table = boto3.resource('dynamodb').table(os.environ['DYNAMODB_TABLE'])
     record = table.get_item(
         Key={'timestamp': timestamp}
