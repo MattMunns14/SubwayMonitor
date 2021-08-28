@@ -8,7 +8,7 @@ from subway_monitor import train_in_range
 from utils import dynamo_item_to_dict
 from decimal import Decimal
 
-POLLING_FREQUENCY = 20
+POLLING_FREQUENCY = 15
 
 
 def lambda_handler(event, context):
