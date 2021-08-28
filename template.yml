@@ -90,3 +90,5 @@ Resources:
 
   PollQueue:
     Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 45
