@@ -80,6 +80,8 @@ def update_dynamo(timestamp, status):
         Key={'timestamp': timestamp}
     )
     record['status'] = status
+    print(record)
+    record[timestamp] = timestamp
     table.put_item(
         Item=record
     )
