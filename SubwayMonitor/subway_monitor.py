@@ -54,7 +54,8 @@ SUPPORTED_TRAINS_AND_INFO = {
     ('A', 'N'): {
         'station': 'A22N',
         'train': 'A'
-    }
+    },
+    ('B', 'N'):
 
 }
 

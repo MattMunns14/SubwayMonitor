@@ -76,13 +76,10 @@ def update_dynamo(timestamp, status):
     if not isinstance(timestamp, Decimal):
         timestamp = Decimal(str(timestamp))
     table = boto3.resource('dynamodb').Table(os.environ['DYNAMODB_TABLE'])
-    print('Trying to find record with timestamp:', timestamp)
     record = table.get_item(
         Key={'timestamp': timestamp}
     )
-    print('DB record:', record)
     record['Item']['status'] = status
-    print(record['Item'])
     table.put_item(
         Item=record['Item']
     )
