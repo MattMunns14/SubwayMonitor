@@ -79,6 +79,7 @@ def update_dynamo(timestamp, status):
     record = table.get_item(
         Key={'timestamp': timestamp}
     )
+    print(record)
     record['Item']['status'] = status
     print(record['Item'])
     table.put_item(
